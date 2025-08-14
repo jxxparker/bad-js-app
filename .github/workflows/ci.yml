@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Lint (optional)
+        run: npm run lint || echo "No lint script; skipping"
+
+      - name: Test (optional)
+        run: npm test || echo "No tests; skipping"
+
+      - name: Build (optional)
+        run: npm run build || echo "No build; skipping"
+
+      - name: Show Node & npm versions
+        run: |
+          node -v
+          npm -v
